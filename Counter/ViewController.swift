@@ -12,7 +12,7 @@ final class ViewController: UIViewController {
         }
     }
     
-    private var currentHistory: String = "" {
+    private var currentHistory: String = "История изменений" {
         didSet {
             UserDefaults.standard.set(currentHistory, forKey: "Saved counter history")
         }
@@ -30,7 +30,7 @@ final class ViewController: UIViewController {
         count = UserDefaults.standard.integer(forKey: "Saved counter value")
         countValueLabel.text = "Значение счетчика:\n\(count)"
         
-        currentHistory = UserDefaults.standard.string(forKey: "Saved counter history") ?? ""
+        currentHistory = UserDefaults.standard.string(forKey: "Saved counter history") ?? "История изменений"
         countHistoryTextView.text = currentHistory
     }
     
@@ -68,5 +68,11 @@ final class ViewController: UIViewController {
         count = 0
         updateHistory("Значение сброшено")
     }
+    
+    @IBAction func clearHistoryOnTap(_ sender: Any) {
+        currentHistory = "История изменений"
+        countHistoryTextView.text = currentHistory
+    }
+    
 }
 
