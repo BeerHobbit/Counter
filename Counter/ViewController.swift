@@ -8,6 +8,13 @@ final class ViewController: UIViewController {
     private var count: Int = 0 {
         didSet {
             countValueLabel.text = "Значение счетчика:\n\(count)"
+            UserDefaults.standard.set(count, forKey: "Saved counter value")
+        }
+    }
+    
+    private var currentHistory: String = "" {
+        didSet {
+            UserDefaults.standard.set(currentHistory, forKey: "Saved counter history")
         }
     }
     
@@ -19,7 +26,12 @@ final class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        count = UserDefaults.standard.integer(forKey: "Saved counter value")
         countValueLabel.text = "Значение счетчика:\n\(count)"
+        
+        currentHistory = UserDefaults.standard.string(forKey: "Saved counter history") ?? ""
+        countHistoryTextView.text = currentHistory
     }
     
     private func makeCurrentDateString() -> String {
@@ -32,27 +44,29 @@ final class ViewController: UIViewController {
         countHistoryTextView.scrollRangeToVisible(range)
     }
     
+    private func updateHistory(_ message: String) {
+        currentHistory += "\n[\(makeCurrentDateString())]: \(message)"
+        countHistoryTextView.text = currentHistory
+        scrollToLastString()
+    }
+    
     @IBAction private func addOnTap(_ sender: Any) {
         count += 1
-        countHistoryTextView.text += "\n[\(makeCurrentDateString())]: Значение изменено на +1"
-        scrollToLastString()
+        updateHistory("Значение изменено на +1")
     }
     
     @IBAction private func substractOnTap(_ sender: Any) {
         if count > 0 {
             count -= 1
-            countHistoryTextView.text += "\n[\(makeCurrentDateString())]: Значение изменено на -1"
-            scrollToLastString()
+            updateHistory("Значение изменено на -1")
         } else {
-            countHistoryTextView.text += "\n[\(makeCurrentDateString())]: Попытка уменьшить значение счётчика ниже 0"
-            scrollToLastString()
+            updateHistory("Попытка уменьшить значение счётчика ниже 0")
         }
     }
     
     @IBAction private func resetOnTap(_ sender: Any) {
         count = 0
-        countHistoryTextView.text += "\n[\(makeCurrentDateString())]: Значение сброшено"
-        scrollToLastString()
+        updateHistory("Значение сброшено")
     }
 }
 
